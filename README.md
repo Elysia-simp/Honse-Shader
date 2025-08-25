@@ -1,6 +1,6 @@
 For our one and only
 
-![best girl](https://media1.tenor.com/m/UnXv0rUV9TAAAAAd/uma-musume-umamusume.gif)
+![best girl](https://media1.tenor.com/m/UnXv0rUV9TAAAAAC/uma-musume-umamusume.gif)
 
 
 
