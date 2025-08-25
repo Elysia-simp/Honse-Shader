@@ -1,0 +1,69 @@
+//includes
+#include <header/header.fxh>
+#include <Shaders/base_tex.fxh>
+#include <includes/uma-common.hlsl>
+//
+
+//base structure
+struct vs_in
+{
+    float4 pos          : POSITION;
+    float3 normal       : NORMAL;
+    float2 uv            : TEXCOORD0;
+};
+
+
+struct vs_out
+{
+    float4 pos          : POSITION;
+    float2 uv           : TEXCOORD0;
+};
+
+vs_out vs_model ( vs_in i)
+{
+    vs_out o = (vs_out)0;
+    o.pos = mul(i.pos, mmd_wvp);
+    o.uv = i.uv;
+    return o;
+}
+
+float4 ps_model(vs_out i, float vface : VFACE) : COLOR0
+{
+
+    float2 uv = i.uv;
+    float4 color = egColor;
+    float4 diffuse = tex2D(diffuseSampler, uv);
+    color.rgb *= diffuse.rgb;
+
+
+
+    return color;
+}
+
+technique model_SS_tech <string MMDPASS = "object_ss"; >
+{
+    pass main
+    {
+        StencilRef = _StencilMask;
+        StencilFunc = ALWAYS;
+        StencilPass = REPLACE;
+        VertexShader = compile vs_3_0 vs_model();
+        PixelShader = compile ps_3_0 ps_model();
+    }
+}
+
+technique model_tech <string MMDPASS = "object"; >
+{
+    pass main
+    {
+        StencilRef = _StencilMask;
+        StencilFunc = ALWAYS;
+        StencilPass = REPLACE;
+        VertexShader = compile vs_3_0 vs_model();
+        PixelShader = compile ps_3_0 ps_model();
+    }
+}
+
+
+technique edge <string MMDPASS = "edge";>{} //FUCK your pmx settings
+technique shadow <string MMDPASS = "shadow";>{}

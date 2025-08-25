@@ -1,0 +1,163 @@
+//includes
+#include <header/header.fxh>
+#include <Shaders/base_tex.fxh>
+#include <Shaders/outline_shader.fxsub>
+#include <includes/uma-common.hlsl>
+//
+
+//base structure
+struct vs_in
+{
+    float4 pos          : POSITION;
+    float3 normal       : NORMAL;
+    float2 uv            : TEXCOORD0;
+    float4 vertexcolor   : TEXCOORD3; //umaviewer uses texcoord3 
+};
+
+
+struct vs_out
+{
+    float4 pos          : POSITION;
+    float2 uv           : TEXCOORD0;
+    float4 vertex       : TEXCOORD1;
+    float3 normal       : TEXCOORD2;
+    float3 view         : TEXCOORD3;
+    float4 ws_pos         : TEXCOORD4;
+};
+
+vs_out vs_model ( vs_in i)
+{
+    vs_out o = (vs_out)0; 
+    o.pos = mul(i.pos, mmd_wvp);
+    o.uv = i.uv;
+    o.vertex = i.vertexcolor;
+	o.normal = mul((float3x3) mmd_world, i.normal);
+    o.view = mmd_cameraPosition - mul(i.pos.xyz, (float3x3)mmd_world);
+    o.ws_pos = mul(i.pos, mmd_world);
+    return o;
+}
+
+float4 ps_model(vs_out i, float vface : VFACE) : COLOR0
+{
+    float2 uv = i.uv;
+    float4 vertexcol = i.vertex;
+    float3 normal = normalize(i.normal);
+    float3 view = normalize(i.view);
+    float3 half_vec = normalize(view + -light_d);
+    float4 color = egColor;
+    float4 diffuse = tex2D(diffuseSampler, uv);
+    float4 option = tex2D(OptionSampler, uv);
+    float4 triple = tex2D(TripleSampler, uv);
+
+
+    color.rgb *= diffuse.rgb;
+
+    float2 option_lerp = option.yz + -float2(0.0, 0.5);
+    option_lerp = _UseOptionMaskMap * option_lerp + float2(0.0, 0.5);
+
+    float ndotl = dot(normal, -light_d) * 0.5 + 0.5;
+
+    float shadow = UmaShadow(ndotl, triple.x);
+    float3 shadowcol = tex2D(ToonSampler, uv) * egColor * _GlobalToon.xyz;
+
+    float vertpow = whateverthisis(vertexcol.w, ndotl, _VertexColorToonPower);
+
+    color.xyz = ToonShift(color.xyz, _ToonBrightColor, vertpow);
+    shadowcol = ToonShift(shadowcol.xyz, _ToonDarkColor, vertpow);
+
+    float3 rimspecenv = UmaRimSpec(normal, view, option.z, triple.y);
+
+    //env
+    float3 envuv = mul(normal, (float3x3)mmd_view);
+    envuv.xy = envuv.xy * float2(0.5, -0.5) + 0.5; // i do this because it'll flip without using an extra instruction
+    float3 env = tex2D(EnvSampler, envuv.xy);
+    env = (color * env);
+
+    color.xyz = lerp(color.xyz, shadowcol, shadow);
+
+    float3 FaceForward = mul(float3(0,0,1), (float3x3)head_bone);
+    float3 FaceUp = mul(float3(0,1,0), (float3x3)head_bone);
+    float3 FaceLoc = head_bone._41_42_43;
+
+    float3 local_light_d = mul(-light_d, (float3x3)head_bone);
+    float3 light_cross = cross(float3(0,0,1), local_light_d);
+    float light_sign = dot(light_cross, float3(0,1,0)) >= 0.0 ? 1.0 : -1.0;
+
+    float3 local_pos = mul(i.ws_pos - FaceLoc, (float3x3)transpose(head_bone));
+    float3 pos_cross = cross(float3(0,0,1), local_pos);
+    float pos_sign = dot(pos_cross, float3(0,1,0)) >= 0.0 ? 1.0 : -1.0;
+
+    float blendFactor = (pos_sign * light_sign + 1.0) * 0.5;
+
+    float3 blendedColor1 = lerp(shadowcol, diffuse.xyz * egColor, blendFactor);
+    float3 blendedColor2 = lerp(diffuse.xyz * egColor, shadowcol, blendFactor);
+
+    float faceDot = max(dot(FaceForward, -light_d) + 0.1f, 0.0); 
+    float faceDotTemp = max(-abs((-faceDot) + 0.5f) * 2.0 + 1.0, 0.0);
+
+    float upDot = min(dot(FaceUp, -light_d), 0.0) + 1.0f;
+    float forwardDot = -abs(dot(FaceForward, -light_d)) + 1.0;
+    forwardDot = saturate(forwardDot + forwardDot);
+
+
+    float cheekFactor = upDot * upDot * faceDotTemp;
+    float tripleYOffset = max(triple.y - 0.51, 0.0);
+    float cheekMask = shadow * tripleYOffset;
+    float cheekTest = dot(float2(cheekMask, cheekMask), float2(cheekFactor, cheekFactor));
+
+    float cheekThreshold = 1 - _CheekPretenseThreshold;
+    bool cheekActive = (cheekTest >= cheekThreshold) && (triple.y >= 0.51);
+    float cheekBlend = cheekActive ? 1.0 : 0.0;
+
+    color.xyz = lerp(color.xyz, blendedColor2, cheekBlend); // cheek
+
+    float noseThreshold = 1 - _NosePretenseThreshold;
+    float nose = (min(triple.y, 0.5) * -2.0 + 1.0) * forwardDot;
+    bool noseActive = (nose >= noseThreshold);
+    bool noseVisible = (triple.y <= 0.49);
+
+    float noseBlend = noseVisible ? _NoseVisibility : 0.0;
+    float noseMask = noseActive ? noseBlend : 0.0;
+
+    color.xyz = lerp(color.xyz, blendedColor1, noseMask); // nose
+
+    color.xyz += (rimspecenv.x * (_RimColor.xyz * egColor));
+    color.xyz += (rimspecenv.y * (_RimColor2.xyz * egColor));
+    color.xyz = lerp(color, env * _EnvBias, option.y * _EnvRate);
+
+    return color;
+}
+
+technique model_SS_tech <string MMDPASS = "object_ss"; >
+{
+    pass main
+    {
+        StencilRef = _StencilMask;
+        StencilFunc = NOTEQUAL;
+        StencilPass = KEEP;
+        VertexShader = compile vs_3_0 vs_model();
+        PixelShader = compile ps_3_0 ps_model();
+    }
+    pass edge
+    {
+        StencilRef = _StencilMask;
+        StencilFunc = NOTEQUAL;
+        StencilPass = KEEP;
+        cullmode = cw;
+        VertexShader = compile vs_3_0 vs_edge();
+        PixelShader = compile ps_3_0 ps_edge();
+    }
+}
+
+technique model_tech <string MMDPASS = "object"; >
+{
+    pass main
+    {
+        VertexShader = compile vs_3_0 vs_model();
+        PixelShader = compile ps_3_0 ps_model();
+    }
+}
+
+
+technique edge <string MMDPASS = "edge";>{} //FUCK your pmx settings
+technique shadow <string MMDPASS = "shadow";>{}
