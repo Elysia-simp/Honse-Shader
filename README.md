@@ -1,6 +1,6 @@
 For our one and only
 
-![best girl](https://tenor.com/view/uma-musume-umamusume-silly-urara-haru-urara-gif-5941918971645523248)
+![best girl](https://media1.tenor.com/m/UnXv0rUV9TAAAAAd/uma-musume-umamusume.gif)
 
 
 
