@@ -1,11 +1,17 @@
+For our one and only
+
+<div class="tenor-gif-embed" data-postid="5941918971645523248" data-share-method="host" data-aspect-ratio="1" data-width="100%"><a href="https://tenor.com/view/uma-musume-umamusume-silly-urara-haru-urara-gif-5941918971645523248">Uma Musume Umamusume GIF</a>from <a href="https://tenor.com/search/uma+musume-gifs">Uma Musume GIFs</a></div> <script type="text/javascript" async src="https://tenor.com/embed.js"></script>
+
+
+This project is more about readability than anything.
+
 # KNOWN BUGS
 
 These are bugs I know of that exist because this is global Uma Musume shader rather than JP. (they made it much harder to live debug in JP!)
 
-1. (Version difference) The cheek shadows do not work as intended in this point in time. This is more often disabled than not anyways.
-2. (Version difference) The nose does not work exactly 1:1 to JP.
+... well none that I'm aware of.
 
-Any and all version differences will be addressed once they come up.
+Major bugs will go here obviously.
 
 
 # OLD GPU WARNING
