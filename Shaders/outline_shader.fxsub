@@ -1,7 +1,7 @@
 struct edge_in
 {
     float4 pos          : POSITION;
-    float3 normal       : NORMAL;
+    float3 normal       : NORMAL; // should be tangent, but mmd doesn't support transformations of tangents anyways...
     float2 uv            : TEXCOORD0;
     float4 vertexcolor   : TEXCOORD3; //umaviewer uses texcoord3 
 };
