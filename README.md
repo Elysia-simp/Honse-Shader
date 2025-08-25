@@ -1,4 +1,4 @@
-For our one and only
+For our one and only...
 
 ![best girl](https://media1.tenor.com/m/UnXv0rUV9TAAAAAC/uma-musume-umamusume.gif)
 
@@ -26,7 +26,7 @@ Well, It's either all that or y'all need to upgrade to windows 10+ idk...
 
 You will require a dumped material file from the game, While this uses [UmaViewer](https://github.com/katboi01/UmaViewer) exports as a base. I would not reccomend using any other methods of exports unless you knew what you were doing.
 
-If you use UmaViewer in editor you can use this edit of [ModelExporter.cs](https://gist.github.com/Elysia-simp/9c4d8c7c59f7d3e531c2a8b374711383) that'll export material values from UmaViewer.
+If you use UmaViewer in editor you can use this edit of [ModelExporter.cs](https://gist.github.com/Elysia-simp/9c4d8c7c59f7d3e531c2a8b374711383) that'll export (most) material values from UmaViewer.
 
 
 Otherwise you can just use your own dumped materials and just edit Material.fx for each instance of your material.
