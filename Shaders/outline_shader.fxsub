@@ -18,7 +18,7 @@ struct edge_out
 edge_out vs_edge ( edge_in i)
 {
     edge_out o = (edge_out)0;
-    i.pos.xyz += i.normal * (i.vertexcolor.x * _GlobalOutlineWidth) * _OutlineWidth * (0.0027999999); //scale difference
+    i.pos.xyz += i.normal * (i.vertexcolor.x * _GlobalOutlineWidth) * _OutlineWidth * (0.05); //scale difference should be 0.0028 but that's too small for MMD
     o.pos = mul(i.pos, mmd_wvp);
     o.uv = i.uv;
     o.vertex = i.vertexcolor;
