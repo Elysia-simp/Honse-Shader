@@ -37,11 +37,11 @@ There are no other alternatives to this as it'll have to be on UmaViewer devs or
 
 1. Follow the official guidelines for Uma Musume Fan content/derivative work ([JP](https://umamusume.jp/derivativework_guidelines/)/[EN](https://umamusume.com/fan-createdguide/)).
 2. When using this shader do clarify that CyGames and Me (Chips) created the shader.
-3. When releasing models using HonseShader. Only ship relevant material files to prevent conflicts. If you have made modifications to the shader then this is not applicable.
+3. When releasing models using HonseShader. Only ship relevant material files to prevent conflicts. If you have made modifications to the shader then this is not applicable. You can find an example of what I mean [here](https://mega.nz/file/EE9yWLyA#LFYDVxT5LJKuUhwdEJvpTP43E3-XZaPGc2EOo4CelL0).
 4. If you use code from this for another shader. Please credit me.
 
 # Unimplemented features
 
-I implemented features based on how I use the shader within context. If something is missing and makes a valid point for implementing into MMD please let me know via Discord (CBTDWG) or in the error reports (label them correctly)! However if you come to me with features not within the game itself I will just label them as "not implemented" and moving on.
+I implemented features based on how I use the shader within context. If something is missing and makes a valid point for implementing into MMD please let me know via Discord (CBTDWG) or in the error reports (label them correctly)! However if you come to me with features not within the game itself I will just label them as "not implemented" and moving on. Or if I'm already working on it I'll probably close the issue while letting you know.
 
 If you have any other inquires about the rules or the shader itself best to contact me via Discord.
