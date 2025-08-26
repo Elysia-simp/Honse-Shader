@@ -3,8 +3,9 @@ For our one and only...
 ![best girl](https://media1.tenor.com/m/UnXv0rUV9TAAAAAC/uma-musume-umamusume.gif)
 
 
-
 This project is more about readability than anything.
+
+As a Disclaimer. No other projects have been referenced for this shader to be made possible.
 
 # KNOWN BUGS
 
@@ -29,7 +30,7 @@ You will require a dumped material file from the game, While this uses [UmaViewe
 If you use UmaViewer in editor you can use this edit of [ModelExporter.cs](https://gist.github.com/Elysia-simp/9c4d8c7c59f7d3e531c2a8b374711383) that'll export (most) material values from UmaViewer.
 
 
-Otherwise you can just use your own dumped materials and just edit Material.fx for each instance of your material.
+Otherwise you can just use your own dumped materials with reference from rule 3.
 
 There are no other alternatives to this as it'll have to be on UmaViewer devs or someone else. Due to the complexity of the shader it's not exactly plug and play. This is just how I personally choose to go about it.
 

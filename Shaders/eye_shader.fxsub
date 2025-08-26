@@ -32,7 +32,8 @@ vs_out vs_model ( vs_in i) // TO DO: add eye shake
     o.uv = i.uv;
 	o.normal = mul((float3x3)mmd_world, i.normal);
     o.view = mmd_cameraPosition - mul(i.pos.xyz, (float3x3)mmd_world);
-    o.eye_uv = float4(i.uv1, i.uv2);
+    
+    o.eye_uv = float4(i.uv1, i.uv2); // investigate zw later
 
     bool check = i.uv.y >= 0.5;
     float2  eyepar;
@@ -51,9 +52,10 @@ float4 ps_model(vs_out i, float vface : VFACE) : COLOR0
     float4 eye_uv = i.eye_uv;
     float4 color = egColor;
     float4 diffuse = tex2D(diffuseSampler, uv);
+
     float high0 = tex2D(High0Sampler, eye_uv.xy);
- 
     high0 = (high0 * i.eyeparams.x - _Limit) > 0.5;
+
     float high1 = tex2D(High1Sampler, eye_uv.xy);
     high1 = (high1 * i.eyeparams.y - _Limit) > 0.5;
 

@@ -79,7 +79,8 @@ float4 ps_model(vs_out i, float vface : VFACE) : COLOR0
     float3 FaceUp = mul(float3(0,1,0), (float3x3)head_bone);
     float3 FaceLoc = head_bone._41_42_43;
 
-    float3 local_light_d = mul(-light_d, (float3x3)head_bone);
+    float3 local_light_d = mul((float3x3)head_bone, -light_d);
+
     float3 light_cross = cross(float3(0,0,1), local_light_d);
     float light_sign = dot(light_cross, float3(0,1,0)) >= 0.0 ? 1.0 : -1.0;
 
@@ -121,7 +122,7 @@ float4 ps_model(vs_out i, float vface : VFACE) : COLOR0
 
     color.xyz = lerp(color.xyz, blendedColor1, noseMask); // nose
 
-    color.xyz += (rimspecenv.x * (_RimColor.xyz * egColor));
+    color.xyz += (rimspecenv.x * (_RimColor.xyz * egColor)); // doubt but they have parameters so...
     color.xyz += (rimspecenv.y * (_RimColor2.xyz * egColor));
     color.xyz = lerp(color, env * _EnvBias, option.y * _EnvRate);
 
