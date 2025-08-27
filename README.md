@@ -32,7 +32,16 @@ If you use UmaViewer in editor you can use this edit of [ModelExporter.cs](https
 
 Otherwise you can just use your own dumped materials with reference from rule 3.
 
+If you do it manually do include these two in your material file
+
+#include <globals.hlsl>
+
+#include <shaders/{shadertype}_shader.fxsub> (base/eyebrow/face/eye)
+
+
 There are no other alternatives to this as it'll have to be on UmaViewer devs or someone else. Due to the complexity of the shader it's not exactly plug and play. This is just how I personally choose to go about it.
+
+
 
 # Rules
 
