@@ -1,6 +1,7 @@
 //includes
 #include <header/header.fxh>
 #include <Shaders/eye_tex.fxh>
+#include <includes/uma-common.hlsl>
 //
 
 //base structure
@@ -40,6 +41,7 @@ vs_out vs_model ( vs_in i) // TO DO: add eye shake
     eyepar.x = check ? _HighParam1[0].w : _HighParam2[0].w;
     eyepar.y = check ? _HighParam1[1].w : _HighParam2[1].w;
     o.eyeparams = eyepar;
+    
     return o;
 }
 
@@ -68,7 +70,7 @@ float4 ps_model(vs_out i, float vface : VFACE) : COLOR0
     color.xyz += high0 * egColor;
     color.xyz += high1 * egColor;
     color.xyz += high2 * egColor;
-
+    Generate_Saturation(color.xyz);
     return color;
 }
 

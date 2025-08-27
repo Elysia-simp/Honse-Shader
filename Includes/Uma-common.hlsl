@@ -66,3 +66,9 @@ float3 UmaView(float3 view, float offset_horizontal, float offset_vertical, floa
         return float3(rims.xy,spec.x);
     }
 #endif
+
+void Generate_Saturation(inout float3 color)
+{
+    float x = dot(color.xyz, float3(0.213f, 0.72f, 0.072f));
+    color.xyz = lerp(x, color.xyz, _Saturation);
+}

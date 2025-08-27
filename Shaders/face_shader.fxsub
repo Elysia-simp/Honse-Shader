@@ -1,8 +1,8 @@
 //includes
 #include <header/header.fxh>
 #include <Shaders/base_tex.fxh>
-#include <Shaders/outline_shader.fxsub>
 #include <includes/uma-common.hlsl>
+#include <Shaders/outline_shader.fxsub>
 //
 
 //base structure
@@ -65,13 +65,6 @@ float4 ps_model(vs_out i, float vface : VFACE) : COLOR0
     color.xyz = ToonShift(color.xyz, _ToonBrightColor, vertpow);
     shadowcol = ToonShift(shadowcol.xyz, _ToonDarkColor, vertpow);
 
-    float3 rimspecenv = UmaRimSpec(normal, view, option.z, triple.y);
-
-    //env
-    float3 envuv = mul(normal, (float3x3)mmd_view);
-    envuv.xy = envuv.xy * float2(0.5, -0.5) + 0.5; // i do this because it'll flip without using an extra instruction
-    float3 env = tex2D(EnvSampler, envuv.xy);
-    env = (color * env);
 
     color.xyz = lerp(color.xyz, shadowcol, shadow);
 
@@ -122,10 +115,10 @@ float4 ps_model(vs_out i, float vface : VFACE) : COLOR0
 
     color.xyz = lerp(color.xyz, blendedColor1, noseMask); // nose
 
-    color.xyz += (rimspecenv.x * (_RimColor.xyz * egColor)); // doubt but they have parameters so...
-    color.xyz += (rimspecenv.y * (_RimColor2.xyz * egColor));
-    color.xyz = lerp(color, env * _EnvBias, option.y * _EnvRate);
-
+    // color.xyz += (rimspecenv.x * (_RimColor.xyz * egColor)); // doubt but they have parameters so...
+    // color.xyz += (rimspecenv.y * (_RimColor2.xyz * egColor));
+    // color.xyz = lerp(color, env * _EnvBias, option.y * _EnvRate);
+    Generate_Saturation(color.xyz);
     return color;
 }
 

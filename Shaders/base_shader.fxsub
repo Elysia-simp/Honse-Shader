@@ -1,8 +1,8 @@
 //includes
 #include <header/header.fxh>
 #include <Shaders/base_tex.fxh>
-#include <Shaders/outline_shader.fxsub>
 #include <includes/uma-common.hlsl>
+#include <Shaders/outline_shader.fxsub>
 //
 
 //base structure
@@ -79,7 +79,7 @@ float4 ps_model(vs_out i, float vface : VFACE) : COLOR0
     color.xyz += (rimspecenv.y * _RimColor2.xyz);
     color.xyz = lerp(color, env * _EnvBias, option.y * _EnvRate);
     color.xyz += (rimspecenv.z * (_SpecularColor * egColor));
-
+    Generate_Saturation(color.xyz);
 
     return color;
 }
