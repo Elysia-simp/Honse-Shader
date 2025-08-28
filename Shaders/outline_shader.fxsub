@@ -39,7 +39,6 @@ float4 ps_edge(edge_out i, float vface : VFACE) : COLOR0
     float4 diffuse = tex2D(diffuseSampler, uv);
     float4 triple = tex2D(TripleSampler, uv);
     color.xyz *= lerp(diffuse.xyz * _OutlineColor.xyz, diffuse.xyz, _OutlineColor.w + _OutlineColor.w);
-    clip(i.scale - 0.001);
     if(triple.z < _Cutoff) discard; //literally all there is to alpha
     Generate_Saturation(color.xyz);
     return color;
