@@ -48,7 +48,11 @@ float4 ps_model(vs_out i, float vface : VFACE) : COLOR0
     float4 option = tex2D(OptionSampler, uv);
     float4 triple = tex2D(TripleSampler, uv);
 
-    if(triple.z < _Cutoff) discard; //literally all there is to alpha
+    #ifndef AlphaBlend
+        if(triple.z < _Cutoff) discard; //literally all there is to alpha
+    #else 
+        color.w = triple.z;
+    #endif
     color.rgb *= diffuse.rgb;
 
     float2 option_lerp = option.yz + -float2(0.0, 0.5);

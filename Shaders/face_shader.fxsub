@@ -68,18 +68,20 @@ float4 ps_model(vs_out i, float vface : VFACE) : COLOR0
 
     color.xyz = lerp(color.xyz, shadowcol, shadow);
 
-    float3 FaceForward = mul(float3(0,0,1), (float3x3)head_bone);
-    float3 FaceUp = mul(float3(0,1,0), (float3x3)head_bone);
+    float3 Forward = float3(0,0,1);
+    float3 Up = float3(0,1,0);
+    float3 FaceForward = mul(Forward, (float3x3)head_bone);
+    float3 FaceUp = mul(Up, (float3x3)head_bone);
     float3 FaceLoc = head_bone._41_42_43;
 
     float3 local_light_d = mul((float3x3)head_bone, -light_d);
 
-    float3 light_cross = cross(float3(0,0,1), local_light_d);
-    float light_sign = dot(light_cross, float3(0,1,0)) >= 0.0 ? 1.0 : -1.0;
+    float3 light_cross = cross(Forward, local_light_d);
+    float light_sign = dot(light_cross, Up) >= 0.0 ? 1.0 : -1.0;
 
     float3 local_pos = mul(i.ws_pos - FaceLoc, (float3x3)transpose(head_bone));
-    float3 pos_cross = cross(float3(0,0,1), local_pos);
-    float pos_sign = dot(pos_cross, float3(0,1,0)) >= 0.0 ? 1.0 : -1.0;
+    float3 pos_cross = cross(Forward, local_pos);
+    float pos_sign = dot(pos_cross, Up) >= 0.0 ? 1.0 : -1.0;
 
     float blendFactor = (pos_sign * light_sign + 1.0) * 0.5;
 
