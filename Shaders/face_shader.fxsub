@@ -149,8 +149,20 @@ technique model_tech <string MMDPASS = "object"; >
 {
     pass main
     {
+        StencilRef = _StencilMask;
+        StencilFunc = NOTEQUAL;
+        StencilPass = KEEP;
         VertexShader = compile vs_3_0 vs_model();
         PixelShader = compile ps_3_0 ps_model();
+    }
+    pass edge
+    {
+        StencilRef = _StencilMask;
+        StencilFunc = NOTEQUAL;
+        StencilPass = KEEP;
+        cullmode = cw;
+        VertexShader = compile vs_3_0 vs_edge();
+        PixelShader = compile ps_3_0 ps_edge();
     }
 }
 
