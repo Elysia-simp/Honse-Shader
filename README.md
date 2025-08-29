@@ -41,7 +41,9 @@ If you do it manually do include these two in your material file
 
 There are no other alternatives to this as it'll have to be on UmaViewer devs or someone else. Due to the complexity of the shader it's not exactly plug and play. This is just how I personally choose to go about it.
 
+If your eyebrows are not showing up follow this image
 
+![bruh](images/Material.png)
 
 # Rules
 
