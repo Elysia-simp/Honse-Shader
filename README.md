@@ -43,7 +43,7 @@ There are no other alternatives to this as it'll have to be on UmaViewer devs or
 
 If your eyebrows are not showing up follow this image
 
-![bruh](images/Material.png)
+![bruh](Images/Material.png)
 
 # Rules
 
