@@ -39,6 +39,7 @@ vs_out vs_model ( vs_in i)
 
 float4 ps_model(vs_out i, float vface : VFACE) : COLOR0
 {
+    UmaParams();
     float2 uv = i.uv;
     float4 vertexcol = i.vertex;
     float3 normal = normalize(i.normal);
@@ -52,8 +53,7 @@ float4 ps_model(vs_out i, float vface : VFACE) : COLOR0
 
     color.rgb *= diffuse.rgb;
 
-    float2 option_lerp = option.yz + -float2(0.0, 0.5);
-    option_lerp = _UseOptionMaskMap * option_lerp + float2(0.0, 0.5);
+    float2 option_lerp = lerp(0.5, option.yz, _UseOptionMaskMap);
 
     float ndotl = dot(normal, -light_d) * 0.5 + 0.5;
 
@@ -62,8 +62,8 @@ float4 ps_model(vs_out i, float vface : VFACE) : COLOR0
 
     float vertpow = whateverthisis(vertexcol.w, ndotl, _VertexColorToonPower);
 
-    color.xyz = ToonShift(color.xyz, _ToonBrightColor, vertpow);
-    shadowcol = ToonShift(shadowcol.xyz, _ToonDarkColor, vertpow);
+    color.xyz = ToonShift(color.xyz, ToonBrightColor, vertpow);
+    shadowcol = ToonShift(shadowcol.xyz, ToonDarkColor, vertpow);
 
 
     color.xyz = lerp(color.xyz, shadowcol, shadow);
@@ -121,6 +121,7 @@ float4 ps_model(vs_out i, float vface : VFACE) : COLOR0
     // color.xyz += (rimspecenv.y * (_RimColor2.xyz * egColor));
     // color.xyz = lerp(color, env * _EnvBias, option.y * _EnvRate);
     Generate_Saturation(color.xyz);
+    Generate_Silhouette(color.xyz);
     return color;
 }
 

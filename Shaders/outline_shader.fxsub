@@ -31,7 +31,7 @@ edge_out vs_edge ( edge_in i)
 
 float4 ps_edge(edge_out i, float vface : VFACE) : COLOR0
 {
-
+    UmaParams();
     float2 uv = i.uv;
     float4 vertexcol = i.vertex;
 
@@ -41,5 +41,6 @@ float4 ps_edge(edge_out i, float vface : VFACE) : COLOR0
     color.xyz *= lerp(diffuse.xyz * _OutlineColor.xyz, diffuse.xyz, _OutlineColor.w + _OutlineColor.w);
     if(triple.z < _Cutoff) discard; //literally all there is to alpha
     Generate_Saturation(color.xyz);
+    Generate_Silhouette(color.xyz);
     return color;
 }

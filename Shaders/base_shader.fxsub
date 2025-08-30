@@ -38,6 +38,7 @@ vs_out vs_model ( vs_in i)
 float4 ps_model(vs_out i, float vface : VFACE) : COLOR0
 {
 
+    UmaParams();
     float2 uv = i.uv;
     float4 vertexcol = i.vertex;
     float3 normal = normalize(i.normal);
@@ -47,7 +48,6 @@ float4 ps_model(vs_out i, float vface : VFACE) : COLOR0
     float4 diffuse = tex2D(diffuseSampler, uv);
     float4 option = tex2D(OptionSampler, uv);
     float4 triple = tex2D(TripleSampler, uv);
-
     #ifndef AlphaBlend
         if(triple.z < _Cutoff) discard; //literally all there is to alpha
     #else 
@@ -55,8 +55,7 @@ float4 ps_model(vs_out i, float vface : VFACE) : COLOR0
     #endif
     color.rgb *= diffuse.rgb;
 
-    float2 option_lerp = option.yz + -float2(0.0, 0.5);
-    option_lerp = _UseOptionMaskMap * option_lerp + float2(0.0, 0.5);
+    float2 option_lerp = lerp(0.5, option.yz, _UseOptionMaskMap);
 
     float ndotl = dot(normal, -light_d) * 0.5 + 0.5;
 
@@ -65,11 +64,14 @@ float4 ps_model(vs_out i, float vface : VFACE) : COLOR0
 
     float vertpow = whateverthisis(vertexcol.w, ndotl, _VertexColorToonPower);
 
-    color.xyz = ToonShift(color.xyz, _ToonBrightColor, vertpow);
-    shadowcol = ToonShift(shadowcol.xyz, _ToonDarkColor, vertpow);
+    color.xyz = ToonShift(color.xyz, ToonBrightColor, vertpow);
+    shadowcol = ToonShift(shadowcol.xyz, ToonDarkColor, vertpow);
 
-    float3 rimspecenv = UmaRimSpec(normal, view, option.z, triple.y);
+    float3 rimspecenv = UmaRimSpec(normal, view, option_lerp.y, triple.y);
 
+    float rimmask = max(ndotl, 0.0);
+    float rimshadow = rimmask + _RimShadow + _RimShadowRate;
+    float rimshadow2 = rimmask  + _RimShadowRate2; // okay
     //env
     float3 envuv = mul(normal, (float3x3)mmd_view);
     envuv.xy = envuv.xy * float2(0.5, -0.5) + 0.5;
@@ -79,11 +81,32 @@ float4 ps_model(vs_out i, float vface : VFACE) : COLOR0
 
 
     color.xyz = lerp(color.xyz, shadowcol, shadow);
-    color.xyz += (rimspecenv.x * _RimColor.xyz);
-    color.xyz += (rimspecenv.y * _RimColor2.xyz);
-    color.xyz = lerp(color, env * _EnvBias, option.y * _EnvRate);
+    color.xyz += (rimspecenv.x * lerp(_SpecularColor, RimColor.xyz, _RimSpecRate) * rimshadow);
+    color.xyz += (rimspecenv.y * lerp(_SpecularColor, RimColor2.xyz, _RimSpecRate2) * rimshadow2);
+    color.xyz = lerp(color, env * EnvBias, option.y * EnvRate);
     color.xyz += (rimspecenv.z * (_SpecularColor * egColor));
+    
+    #ifdef _EmissiveTex
+        float3 emission = tex2D(EmissionSampler, uv).xyz * _EmissiveColor.xyz;
+        color.xyz += emission;
+    #endif
+
+    #ifdef _ReflectionMap // fuck pc shaders man
+        float4 refl = tex2D(ReflectionSampler, envuv); // reusing enuv for now, also float4 because i think they intend on adding more, fail safe.
+        refl.xy *= ReflectionBias;
+
+        float3 reflcol = pow(max(ReflectionAddColor * shadowcol, (float3)0.0f), ReflectionPowVal); // sure
+
+        float3 colormul = ReflectionMulColor * refl.x + color;
+        float3 coloradd = lerp(1, reflcol, refl.y);
+
+        color.xyz = lerp(color.xyz, colormul * coloradd, ReflectionRate * option.x);
+        // color.xyz = colormul * coloradd * option.x;
+    #endif 
+
+
     Generate_Saturation(color.xyz);
+    Generate_Silhouette(color.xyz);
 
     return color;
 }

@@ -47,12 +47,12 @@ vs_out vs_model ( vs_in i) // TO DO: add eye shake
 
 float4 ps_model(vs_out i, float vface : VFACE) : COLOR0
 {
-
+    UmaParams();
     float2 uv = i.uv;
     float3 normal = normalize(i.normal);
     float3 view = normalize(i.view);
     float4 eye_uv = i.eye_uv;
-    float4 color = egColor;
+    float4 color = 1;
     float4 diffuse = tex2D(diffuseSampler, uv);
 
     float high0 = tex2D(High0Sampler, eye_uv.xy);
@@ -66,11 +66,14 @@ float4 ps_model(vs_out i, float vface : VFACE) : COLOR0
     float high2 = tex2D(High2Sampler, envuv.xy); //matcap
     high2 = (high2 * _HighParam1[2].w - _Limit) > 0.5;
 
-    color.rgb *= diffuse.rgb;
-    color.xyz += high0 * egColor;
-    color.xyz += high1 * egColor;
-    color.xyz += high2 * egColor;
+    color.rgb = diffuse.rgb;
+    color.xyz += high0;
+    color.xyz += high1;
+    color.xyz += high2;
+    color.xyz *= egColor;
     Generate_Saturation(color.xyz);
+    Generate_Silhouette(color.xyz);
+    
     return color;
 }
 

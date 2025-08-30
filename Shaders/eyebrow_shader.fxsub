@@ -30,12 +30,13 @@ vs_out vs_model ( vs_in i)
 float4 ps_model(vs_out i, float vface : VFACE) : COLOR0
 {
 
+    UmaParams();
     float2 uv = i.uv;
     float4 color = egColor;
     float4 diffuse = tex2D(diffuseSampler, uv);
     color.rgb *= diffuse.rgb;
     Generate_Saturation(color.xyz);
-
+    Generate_Silhouette(color.xyz);
 
     return color;
 }

@@ -19,3 +19,14 @@ sampler ToonSampler = sampler_state
 texture EnvTexture : TEXTURE <string ResourceName = merge_strings("Textures/", _EnvMap);>;
 sampler EnvSampler = sampler_state 
 {texture = < EnvTexture >; ADDRESSU = CLAMP; ADDRESSV = CLAMP;};
+
+#ifdef _EmissiveTex
+texture EmissionTexture : TEXTURE <string ResourceName = merge_strings("Textures/", _EmissiveTex);>;
+sampler EmissionSampler = sampler_state 
+{texture = < EmissionTexture >; ADDRESSU = CLAMP; ADDRESSV = CLAMP;};
+#endif
+#ifdef _ReflectionMap
+texture ReflectionTexture : TEXTURE <string ResourceName = merge_strings("Textures/", _ReflectionMap);>;
+sampler ReflectionSampler = sampler_state 
+{texture = < ReflectionTexture >; ADDRESSU = CLAMP; ADDRESSV = CLAMP;};
+#endif

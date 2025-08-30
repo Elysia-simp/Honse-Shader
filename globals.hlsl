@@ -1,3 +1,4 @@
+#include "Includes/Controllers.hlsl"
 #define _GlobalToon float4(1,1,1,1)
 #define _GlobalOutlineWidth 1
 

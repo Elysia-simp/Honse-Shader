@@ -1,17 +1,18 @@
 float UmaStep(float value, float step, float feather, float mask = 1.0)
 {
-    float stepval = step + (-feather);
-    return saturate((((-mask) * value + stepval) / feather) + 1.0); // rimlights don't use mask here, but it works all the same.
-}
+    return smoothstep(step + feather, step - feather, mask * value);
+} // turns out this was a smoothstep this entire time lmfao
+// my only defense is i don't reverse smoothsteps often
 
 float UmaShadow(float ndotl, float shadowmask)
 {
-    float toonstep = UmaStep(ndotl, _ToonStep, _ToonFeather, shadowmask);
-    float temp = (0.0 >= _ToonStep) ? toonstep : 0.0;
+    float toonstep = UmaStep(ndotl, ShadowStep, clamp(ShadowFeather, 0.0001, 1), shadowmask);
+    float temp = (0.0 >= ShadowStep) ? toonstep : 0.0;
     toonstep += temp;
 
     return toonstep;
 }
+
 
 float3 ToonShift(float3 ToonColBase, float4 ToonColor, float vertpow)
 {
@@ -19,8 +20,7 @@ float3 ToonShift(float3 ToonColBase, float4 ToonColor, float vertpow)
     float toonbrightvert = vertpow * toonbright;
     
     float3 toonbrightcol = lerp(1.0, ToonColor.xyz, toonbrightvert);
-    float3 toonbrightemp = (0.5 >= ToonColor.w) ? 0.0 : ToonColor;
-    float3 toonbrightcol2 = vertpow * toonbrightemp;
+    float3 toonbrightcol2 = vertpow * ((0.5 >= ToonColor.w) ? 0.0 : ToonColor);
 
     return ToonColBase.xyz * toonbrightcol + toonbrightcol2;
 }
@@ -47,15 +47,15 @@ float3 UmaView(float3 view, float offset_horizontal, float offset_vertical, floa
         float3 viewmatrix2 = float3(mmd_view[0].y, mmd_view[1].y, mmd_view[2].y);
 
         //rim
-        float3 viewoffset1 = UmaView(view, _RimHorizonOffset, _RimVerticalOffset, viewmatrix1, viewmatrix2);
-        float3 viewoffset2 = UmaView(view, _RimHorizonOffset2, _RimVerticalOffset2, viewmatrix1, viewmatrix2);
+        float3 viewoffset1 = UmaView(view, RimHorizonOffset, RimVerticalOffset, viewmatrix1, viewmatrix2);
+        float3 viewoffset2 = UmaView(view, RimHorizonOffset2, RimVerticalOffset2, viewmatrix1, viewmatrix2);
 
         float ndotv1 = dot(viewoffset1, normal);
         float ndotv2 = dot(viewoffset2, normal);
 
         float2 rims;
-        rims.x = pow(UmaStep(ndotv1, _RimStep, _RimFeather), 3) * _RimColor.w;
-        rims.y = pow(UmaStep(ndotv2, _RimStep2, _RimFeather2), 3) * _RimColor2.w;
+        rims.x = pow(UmaStep(ndotv1, RimStep, clamp(RimFeather, 0.0001, 1)), 3) * max(RimColor.w, 0.0f);
+        rims.y = pow(UmaStep(ndotv2, RimStep2, clamp(RimFeather2, 0.0001, 1)), 3) * max(RimColor2.w, 0.0f);
         rims.xy *= rimmask;
 
         //specular
@@ -70,5 +70,10 @@ float3 UmaView(float3 view, float offset_horizontal, float offset_vertical, floa
 void Generate_Saturation(inout float3 color)
 {
     float x = dot(color.xyz, float3(0.213f, 0.72f, 0.072f));
-    color.xyz = lerp(x, color.xyz, _Saturation);
+    color.xyz = lerp(x, color.xyz, Saturation);
+}
+
+void Generate_Silhouette(inout float3 color)
+{
+    color.xyz = lerp(color.xyz, CharaColor, Silhouette);
 }

@@ -15,8 +15,11 @@ float3 mmd_cameraPosition : POSITION < string Object = "Camera"; >;
 float4 egColor;
 
 //bones
-float4x4 head_bone : CONTROLOBJECT < string name = "(self)"; string item = "“ª"; >;
-float3 head_loc : CONTROLOBJECT < string name = "(self)"; string item = "“ª"; >;
+float4x4 head_bone : CONTROLOBJECT < string name = "(self)"; string item = "“ª"; >; // so help me github if you change this to utf-8 again...
+
+float3 right = float3(1,0,0);
+float3 forward =  float3(0,0,1);
+float3 up = float3(0,1,0); // why not
 
 
 //mmd light source
