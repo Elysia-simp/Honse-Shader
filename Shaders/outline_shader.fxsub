@@ -20,7 +20,9 @@ struct edge_out
 edge_out vs_edge ( edge_in i)
 {
     edge_out o = (edge_out)0;
-    float scale = (i.vertexcolor.x * _GlobalOutlineWidth) * _OutlineWidth * (0.05); //scale difference should be 0.0028 but that's too small for MMD
+
+    float dis = edge_dis(i.pos);
+    float scale = (i.vertexcolor.x * _GlobalOutlineWidth) * _OutlineWidth * (0.0028) * dis; //scale difference should be 0.0028 but that's too small for MMD
     i.pos.xyz += i.normal * scale; 
     o.pos = mul(i.pos, mmd_wvp);
     o.uv = i.uv;
@@ -34,7 +36,9 @@ float4 ps_edge(edge_out i, float vface : VFACE) : COLOR0
     UmaParams();
     float2 uv = i.uv;
     float4 vertexcol = i.vertex;
-
+    #ifndef IsFace
+    clip(i.vertex.x - 0.5f);
+    #endif
     float4 color = egColor;
     float4 diffuse = tex2D(diffuseSampler, uv);
     float4 triple = tex2D(TripleSampler, uv);

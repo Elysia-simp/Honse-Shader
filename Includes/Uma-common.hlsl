@@ -13,6 +13,16 @@ float UmaShadow(float ndotl, float shadowmask)
     return toonstep;
 }
 
+float edge_dis(float4 pos)
+{
+        // Use projection matrix to get correct perspective scaling
+        float perspective = max(tan(-mmd_p[0].y/2), 0.0001); // mmd_view[1][1] is related to tan(fov/2)
+        if(mmd_p[3].w) perspective = 2.0; // perspective check
+
+        float4 test = mul(pos, mul(model_world, mmd_view));
+        float tmp = ((test.z / test.w));
+        return clamp(tmp, 1, 50);
+}
 
 float3 ToonShift(float3 ToonColBase, float4 ToonColor, float vertpow)
 {

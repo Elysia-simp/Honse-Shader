@@ -7,11 +7,12 @@
 //base structure
 struct vs_in
 {
-    float4 pos          : POSITION;
-    float3 normal       : NORMAL;
-    float2 uv            : TEXCOORD0;
-    float2 uv1            : TEXCOORD1;
-    float2 uv2            : TEXCOORD2;
+    float4 pos              : POSITION;
+    float3 normal           : NORMAL;
+    float2 uv               : TEXCOORD0;
+    float2 uv1              : TEXCOORD1;
+    float2 uv2              : TEXCOORD2;
+    float4 vertexcol        : TEXCOORD3;
 };
 
 
@@ -35,7 +36,7 @@ vs_out vs_model ( vs_in i) // TO DO: add eye shake
     o.view = mmd_cameraPosition - mul(i.pos.xyz, (float3x3)mmd_world);
     
     o.eye_uv = float4(i.uv1, i.uv2); // investigate zw later
-
+    o.vertex = i.vertexcol;
     bool check = i.uv.y >= 0.5;
     float2  eyepar;
     eyepar.x = check ? _HighParam1[0].w : _HighParam2[0].w;
@@ -55,6 +56,11 @@ float4 ps_model(vs_out i, float vface : VFACE) : COLOR0
     float4 color = 1;
     float4 diffuse = tex2D(diffuseSampler, uv);
 
+    float ndotl = dot(normal, -light_d) * 0.5 + 0.5;
+    float shadow = UmaShadow(ndotl, 1);
+
+    float vertpow = whateverthisis(i.vertex.w, ndotl, 1);
+
     float high0 = tex2D(High0Sampler, eye_uv.xy);
     high0 = (high0 * i.eyeparams.x - _Limit) > 0.5;
 
@@ -69,11 +75,15 @@ float4 ps_model(vs_out i, float vface : VFACE) : COLOR0
     color.rgb = diffuse.rgb;
     color.xyz += high0;
     color.xyz += high1;
+    color.xyz = ToonShift(color.xyz, ToonBrightColor, vertpow);
+    float3 shadowcol = ToonShift(color.xyz * 0.7f, ToonDarkColor, vertpow);
+    color.xyz = lerp(color.xyz, shadowcol, shadow);
     color.xyz += high2;
     color.xyz *= egColor;
+
+
     Generate_Saturation(color.xyz);
     Generate_Silhouette(color.xyz);
-    
     return color;
 }
 
