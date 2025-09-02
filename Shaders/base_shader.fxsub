@@ -101,7 +101,6 @@ float4 ps_model(vs_out i, float vface : VFACE) : COLOR0
         float3 coloradd = lerp(1, reflcol, refl.y);
 
         color.xyz = lerp(color.xyz, colormul * coloradd, ReflectionRate * option.x);
-        // color.xyz = colormul * coloradd * option.x;
     #endif 
 
 
@@ -121,15 +120,17 @@ technique model_SS_tech <string MMDPASS = "object_ss"; >
         VertexShader = compile vs_3_0 vs_model();
         PixelShader = compile ps_3_0 ps_model();
     }
-    pass edge
-    {
-        StencilRef = _StencilMask;
-        StencilFunc = NOTEQUAL;
-        StencilPass = KEEP;
-        cullmode = cw;
-        VertexShader = compile vs_3_0 vs_edge();
-        PixelShader = compile ps_3_0 ps_edge();
-    }
+    #ifndef AlphaBlend
+        pass edge
+        {
+            StencilRef = _StencilMask;
+            StencilFunc = NOTEQUAL;
+            StencilPass = KEEP;
+            cullmode = cw;
+            VertexShader = compile vs_3_0 vs_edge();
+            PixelShader = compile ps_3_0 ps_edge();
+        }
+    #endif
 }
 
 technique model_tech <string MMDPASS = "object"; >
@@ -142,15 +143,17 @@ technique model_tech <string MMDPASS = "object"; >
         VertexShader = compile vs_3_0 vs_model();
         PixelShader = compile ps_3_0 ps_model();
     }
-    pass edge
-    {
-        StencilRef = _StencilMask;
-        StencilFunc = NOTEQUAL;
-        StencilPass = KEEP;
-        cullmode = cw;
-        VertexShader = compile vs_3_0 vs_edge();
-        PixelShader = compile ps_3_0 ps_edge();
-    }
+    #ifndef AlphaBlend
+        pass edge
+        {
+            StencilRef = _StencilMask;
+            StencilFunc = NOTEQUAL;
+            StencilPass = KEEP;
+            cullmode = cw;
+            VertexShader = compile vs_3_0 vs_edge();
+            PixelShader = compile ps_3_0 ps_edge();
+        }
+    #endif
 }
 
 
