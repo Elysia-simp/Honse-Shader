@@ -93,7 +93,7 @@ float4 ps_model(vs_out i, float vface : VFACE) : COLOR0
     forwardDot = saturate(forwardDot + forwardDot);
 
 
-    float cheekFactor = upDot * upDot * faceDotTemp;
+    float cheekFactor = pow(upDot,2) * faceDotTemp;
     float tripleYOffset = max(triple.y - 0.51, 0.0);
     float cheekMask = shadow * tripleYOffset;
     float cheekTest = dot(float2(cheekMask, cheekMask), float2(cheekFactor, cheekFactor));
@@ -117,6 +117,10 @@ float4 ps_model(vs_out i, float vface : VFACE) : COLOR0
     // color.xyz += (rimspecenv.x * (_RimColor.xyz * egColor)); // doubt but they have parameters so...
     // color.xyz += (rimspecenv.y * (_RimColor2.xyz * egColor));
     // color.xyz = lerp(color, env * _EnvBias, option.y * _EnvRate);
+    if(mmd_ray)
+    {
+        AdjustForRayMMD(color.xyz);
+    }
     Generate_Saturation(color.xyz);
     Generate_Silhouette(color.xyz);
     return color;

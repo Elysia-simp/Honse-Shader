@@ -13,15 +13,16 @@ float UmaShadow(float ndotl, float shadowmask)
     return toonstep;
 }
 
-float edge_dis(float4 pos)
+float edge_dis()
 {
-        // Use projection matrix to get correct perspective scaling
-        float perspective = max(tan(-mmd_p[0].y/2), 0.0001); // mmd_view[1][1] is related to tan(fov/2)
-        if(mmd_p[3].w) perspective = 2.0; // perspective check
+    float3 position = model_world[3].xyz;
+    float distance = length(position - mmd_cameraPosition);
 
-        float4 test = mul(pos, mul(model_world, mmd_view));
-        float tmp = ((test.z / test.w));
-        return clamp(tmp, 1, 50);
+
+    float fovRadians = mmd_p[1][1];
+    float tanFov = 1.0 / fovRadians;
+    if(mmd_p[3].w) return 30; // perspective check
+    return 3.0f * distance * tanFov;
 }
 
 float3 ToonShift(float3 ToonColBase, float4 ToonColor, float vertpow)
@@ -86,4 +87,9 @@ void Generate_Saturation(inout float3 color)
 void Generate_Silhouette(inout float3 color)
 {
     color.xyz = lerp(color.xyz, CharaColor, Silhouette);
+}
+
+void AdjustForRayMMD(inout float3 color) // this is so fucking bad like... just use sdpbr atp
+{
+        color.xyz = lerp(color / (color + 0.8), pow(color.xyz, 2.0), 0.5f);
 }

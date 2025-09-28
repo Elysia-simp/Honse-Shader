@@ -81,7 +81,11 @@ float4 ps_model(vs_out i, float vface : VFACE) : COLOR0
     color.xyz += high2;
     color.xyz *= egColor;
 
-
+    if(mmd_ray)
+    {
+        AdjustForRayMMD(color.xyz);
+    }
+    
     Generate_Saturation(color.xyz);
     Generate_Silhouette(color.xyz);
     return color;

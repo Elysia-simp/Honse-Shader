@@ -15,12 +15,14 @@ float3 mmd_cameraPosition : POSITION < string Object = "Camera"; >;
 float4 egColor;
 
 //bones
-float4x4 head_bone : CONTROLOBJECT < string name = "(self)"; string item = "“ª"; >; // so help me github if you change this to utf-8 again...
+float4x4 head_bone : CONTROLOBJECT < string name = "(self)"; string item = "Head_shade_start"; >; // so help me github if you change this to utf-8 again...
 
 float3 Right = float3(1,0,0);
 float3 Forward =  float3(0,0,1);
 float3 Up = float3(0,1,0);
 
+//UGH
+bool mmd_ray : CONTROLOBJECT < string name = "ray.x"; >;
 
 //mmd light source
 float3 light_d : DIRECTION < string Object = "Light"; >;
