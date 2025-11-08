@@ -65,7 +65,12 @@ float4 ps_model(vs_out i, float vface : VFACE) : COLOR0
     color.xyz = ToonShift(color.xyz, ToonBrightColor, vertpow);
     shadowcol = ToonShift(shadowcol.xyz, ToonDarkColor, vertpow);
 
+    float3 rimspecenv = UmaRimSpec(normal, view, option_lerp.y, triple.y);
 
+    float rimmask = max(ndotl, 0.0);
+    float rimshadow = rimmask + _RimShadow + _RimShadowRate;
+    float rimshadow2 = rimmask  + _RimShadowRate2; // okay
+    
     color.xyz = lerp(color.xyz, shadowcol, shadow);
 
     float3 FaceForward = mul(Forward, (float3x3)head_bone); // Unity should be UnityObjectToWorldDir(float3(0,0,1))
@@ -114,7 +119,7 @@ float4 ps_model(vs_out i, float vface : VFACE) : COLOR0
 
     color.xyz = lerp(color.xyz, blendedColor1, noseMask); // nose
 
-    color.xyz += (rimspecenv.x * (_RimColor.xyz * egColor));
+    color.xyz += (rimspecenv.x * (_RimColor.xyz * egColor)); // doubt but they have parameters so...
     color.xyz += (rimspecenv.y * (_RimColor2.xyz * egColor));
     // color.xyz = lerp(color, env * _EnvBias, option.y * _EnvRate);
     if(mmd_ray)
