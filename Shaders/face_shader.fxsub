@@ -114,8 +114,8 @@ float4 ps_model(vs_out i, float vface : VFACE) : COLOR0
 
     color.xyz = lerp(color.xyz, blendedColor1, noseMask); // nose
 
-    // color.xyz += (rimspecenv.x * (_RimColor.xyz * egColor)); // doubt but they have parameters so...
-    // color.xyz += (rimspecenv.y * (_RimColor2.xyz * egColor));
+    color.xyz += (rimspecenv.x * (_RimColor.xyz * egColor));
+    color.xyz += (rimspecenv.y * (_RimColor2.xyz * egColor));
     // color.xyz = lerp(color, env * _EnvBias, option.y * _EnvRate);
     if(mmd_ray)
     {
