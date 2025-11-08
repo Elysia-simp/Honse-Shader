@@ -23,9 +23,20 @@ struct vs_out
     float4 vertex       : TEXCOORD1;
     float3 normal       : TEXCOORD2;
     float3 view         : TEXCOORD3;
-    float4 eye_uv       : TEXCOORD4;
+    float2 eye_uv       : TEXCOORD4;
     float2 eyeparams    : TEXCOORD5; 
 };
+float2 CalculateHighlightUV(float2 base_uv, float4 params)
+{
+    float2 highlight_uv = base_uv + params.yx;
+    float sin_val = sin(params.z);
+    float cos_val = cos(params.z);
+    float2 rotated = float2(
+        highlight_uv.y * cos_val - highlight_uv.x * sin_val,
+        highlight_uv.x * cos_val + highlight_uv.y * sin_val
+    );
+    return rotated + 0.5;
+}
 
 vs_out vs_model ( vs_in i) // TO DO: add eye shake
 {
@@ -35,14 +46,27 @@ vs_out vs_model ( vs_in i) // TO DO: add eye shake
 	o.normal = mul((float3x3)mmd_world, i.normal);
     o.view = mmd_cameraPosition - mul(i.pos.xyz, (float3x3)mmd_world);
     
-    o.eye_uv = float4(i.uv1, i.uv2); // investigate zw later
+
     o.vertex = i.vertexcol;
     bool check = i.uv.y >= 0.5;
     float2  eyepar;
     eyepar.x = check ? _HighParam1[0].w : _HighParam2[0].w;
     eyepar.y = check ? _HighParam1[1].w : _HighParam2[1].w;
     o.eyeparams = eyepar;
+
+    float2 base_uv = i.uv1.yx + float2(-0.5, -0.5);
+
+    float2 final_uv1 = CalculateHighlightUV(base_uv, _HighParam1[0]);
+
+    float2 final_uv2 = CalculateHighlightUV(base_uv, _HighParam1[1]);
+
+    float2 final_uv3 = CalculateHighlightUV(base_uv, _HighParam2[1]);
+
+    float2 eye_base_uv = i.uv2.yx + float2(-0.5, -0.5);
+    float2 eye_uv = eye_base_uv + _HighParam1[2].yx;
+    float2 rotated_eye = CalculateHighlightUV(eye_base_uv, _HighParam1[2]);
     
+    o.eye_uv = rotated_eye;
     return o;
 }
 
@@ -52,7 +76,7 @@ float4 ps_model(vs_out i, float vface : VFACE) : COLOR0
     float2 uv = i.uv;
     float3 normal = normalize(i.normal);
     float3 view = normalize(i.view);
-    float4 eye_uv = i.eye_uv;
+    float2 eye_uv = i.eye_uv;
     float4 color = 1;
     float4 diffuse = tex2D(diffuseSampler, uv);
 
@@ -62,15 +86,15 @@ float4 ps_model(vs_out i, float vface : VFACE) : COLOR0
     float vertpow = whateverthisis(i.vertex.w, ndotl, 1);
 
     float high0 = tex2D(High0Sampler, eye_uv.xy);
-    high0 = (high0 * i.eyeparams.x - _Limit) > 0.5;
+    high0 = (high0 * i.eyeparams.x - (_Limit)) > 0.5;
 
     float high1 = tex2D(High1Sampler, eye_uv.xy);
-    high1 = (high1 * i.eyeparams.y - _Limit) > 0.5;
+    high1 = (high1 * i.eyeparams.y - (_Limit)) > 0.5;
 
     float3 envuv = mul(normal, (float3x3)mmd_view);
     envuv.xy = envuv.xy * float2(0.5, -0.5) + 0.5;
     float high2 = tex2D(High2Sampler, envuv.xy); //matcap
-    high2 = (high2 * _HighParam1[2].w - _Limit) > 0.5;
+    high2 = (high2 * _HighParam1[2].w - (_Limit)) > 0.5;
 
     color.rgb = diffuse.rgb;
     color.xyz += high0;
