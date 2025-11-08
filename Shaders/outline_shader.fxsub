@@ -37,7 +37,7 @@ float4 ps_edge(edge_out i, float vface : VFACE) : COLOR0
     float2 uv = i.uv;
     float4 vertexcol = i.vertex;
     #ifndef IsFace
-        clip(i.vertex.x - 0.1f);
+        clip(i.vertex.x - 0.1f); //outline toggle
     #endif
     float4 color = egColor;
     float4 diffuse = tex2D(diffuseSampler, uv);

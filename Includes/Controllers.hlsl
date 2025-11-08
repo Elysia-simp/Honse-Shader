@@ -84,6 +84,10 @@ float RimVerticalOffset2minus : CONTROLOBJECT < string name = "Uma_Controller.pm
 float RimHorizonOffset2minus : CONTROLOBJECT < string name = "Uma_Controller.pmx"; string item = "RimHorizonOffset2-"; >;
 float RimVerticalOffset2plus : CONTROLOBJECT < string name = "Uma_Controller.pmx"; string item = "RimVerticalOffset2+"; >;
 
+//since these aren't exactly required to default, they're not included in umaparams for this reason
+float ControlEyelightExpandRate : CONTROLOBJECT < string name = "Uma_Controller.pmx"; string item = "EyelightExpandRate"; >;
+float ControlEyelightRotateRate : CONTROLOBJECT < string name = "Uma_Controller.pmx"; string item = "EyelightRotateRate"; >;
+
 float Saturation = 0;
 float Silhouette = 0;
 float3 CharaColor = float3(0, 0, 0);
