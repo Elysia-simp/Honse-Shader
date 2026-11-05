@@ -1,3 +1,4 @@
+// ⚠️ NO AI ⚠️
 struct edge_in
 {
     float4 pos          : POSITION;
@@ -56,3 +57,4 @@ float4 ps_edge(edge_out i, float vface : VFACE) : COLOR0
     Generate_Silhouette(color.xyz);
     return color;
 }
+// ⚠️ NO AI ⚠️

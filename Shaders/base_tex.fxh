@@ -1,3 +1,4 @@
+// ⚠️ NO AI ⚠️
 #define merge_strings(a,b) a##b 
 
 
@@ -30,3 +31,4 @@ texture ReflectionTexture : TEXTURE <string ResourceName = merge_strings("Textur
 sampler ReflectionSampler = sampler_state 
 {texture = < ReflectionTexture >; ADDRESSU = CLAMP; ADDRESSV = CLAMP;};
 #endif
+// ⚠️ NO AI ⚠️

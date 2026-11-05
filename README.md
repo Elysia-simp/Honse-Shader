@@ -1,3 +1,12 @@
+# ⚠️ AI DISCLAIMER ⚠️
+I didn't use it.
+
+But I am prohibiting you from using AI on this in any form or way.
+
+
+
+
+------------------------
 For our one and only...
 
 ![best girl](https://media1.tenor.com/m/UnXv0rUV9TAAAAAC/uma-musume-umamusume.gif)

@@ -1,3 +1,4 @@
+// ⚠️ NO AI ⚠️
 #define merge_strings(a,b) a##b 
 
 
@@ -15,3 +16,4 @@ sampler High1Sampler = sampler_state
 texture High2Texture : TEXTURE <string ResourceName = merge_strings("Textures/", _High2Tex);>;
 sampler High2Sampler = sampler_state 
 {texture = < High2Texture >; ADDRESSU = CLAMP; ADDRESSV = CLAMP;};
+// ⚠️ NO AI ⚠️

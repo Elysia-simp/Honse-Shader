@@ -1,3 +1,4 @@
+// ⚠️ NO AI ⚠️
 //includes
 #include <header/header.fxh>
 #include <Shaders/base_tex.fxh>
@@ -73,3 +74,4 @@ technique model_tech <string MMDPASS = "object"; >
 
 technique edge <string MMDPASS = "edge";>{} //FUCK your pmx settings
 technique shadow <string MMDPASS = "shadow";>{}
+// ⚠️ NO AI ⚠️

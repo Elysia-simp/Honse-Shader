@@ -1,3 +1,5 @@
+// ⚠️ NO AI ⚠️
+
 #include "Includes/Controllers.hlsl"
 #define _GlobalToon float4(1,1,1,1)
 #define _GlobalOutlineWidth 1
@@ -15,3 +17,5 @@ float4x4 _HighParam2 = float4x4(
     0.00, 0.00,        0.00, 1.00,
     0.00, 0.00,        0.00, 1.00
 );
+
+// ⚠️ NO AI ⚠️
